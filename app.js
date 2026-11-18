@@ -1,8 +1,8 @@
 const $=s=>document.querySelector(s);
 const icon=window.hubIcon;
 const courses=[
- {id:'tekno',code:'EDUP6023',en:'TECHNOLOGY',title:'Teknologi untuk Pengajaran dan Pembelajaran',desc:'Kursus utama: nota, tutorial, tugasan dan projek digital.',pet:'robot',num:'01',rows:[['book','Nota Pembelajaran','notes-tekno'],['clipboard','Tutorial Minggu 1, 2, 3 dan seterusnya','tutorials'],['folder','Tugasan dan Projek','page:projek'],['video','Video Pembelajaran','videos'],['gallery','Galeri Hasil Kerja','page:galeri']]},
- {id:'sejarah',code:'EDUP6013',en:'HISTORY OF EDUCATION',title:'Sejarah Pendidikan di Malaysia',desc:'Kenali perjalanan pendidikan dan kisah di sebaliknya.',pet:'owl',num:'02',rows:[['book','Nota Pembelajaran','notes-sejarah'],['folder','Tugasan KPPB','kppb-sejarah'],['mic','Audio Temu Bual','interview']]},
+ {id:'tekno',code:'EDUP6023',en:'TECHNOLOGY',title:'Teknologi untuk Pengajaran dan Pembelajaran',desc:'Kursus utama: nota, tutorial, tugasan dan projek digital.',pet:'bunny',num:'01',rows:[['book','Nota Pembelajaran','notes-tekno'],['clipboard','Tutorial Minggu 1, 2, 3 dan seterusnya','tutorials'],['folder','Tugasan dan Projek','page:projek'],['video','Video Pembelajaran','videos'],['gallery','Galeri Hasil Kerja','page:galeri']]},
+ {id:'sejarah',code:'EDUP6013',en:'HISTORY OF EDUCATION',title:'Sejarah Pendidikan di Malaysia',desc:'Kenali perjalanan pendidikan dan kisah di sebaliknya.',pet:'bear',num:'02',rows:[['book','Nota Pembelajaran','notes-sejarah'],['folder','Tugasan KPPB','kppb-sejarah'],['mic','Audio Temu Bual','interview']]},
  {id:'english',code:'MPU6122',en:'ENGLISH LANGUAGE',title:'English Language Proficiency',desc:'Explore, express and grow your confidence in English.',pet:'cat',num:'03',rows:[['book','Learning Notes','notes-english'],['folder','KPPB Assignments','kppb-english'],['video','Movie Review','movie']]}
 ];
 const resources=[
@@ -14,15 +14,15 @@ const resources=[
  {id:'movie',title:'English Movie Review',desc:'Hasil kerja KPPB bagi English Language Proficiency. Pautan ulasan belum disertakan.',icon:'film',tag:'Movie Review · MPU6122',group:'kppb'}
 ];
 const projects=[
- {id:'song',pet:'bunny',title:'Bapaku Pulang dari Kota',desc:'Jom dengar dan menyanyi bersama sebelum memulakan pengembaraan!',icon:'music',tag:'01 · Lagu',url:'https://youtu.be/2s6RcKnIFH8?si=Gbhp9ErX7w7kpo83'},
- {id:'animation',pet:'astronaut',title:'Video Animasi',desc:'Ruang untuk video animasi projek. Pautan video belum disertakan dalam dokumen.',icon:'film',tag:'02 · Video Animasi'},
- {id:'learning',pet:'dino',local:'ekspres-cilik.html',title:'Ruang Pembelajaran',desc:'Terokai laman asal Ekspres Cilik untuk aktiviti pembelajaran interaktif.',icon:'bus',tag:'03 · Ruang Pembelajaran',url:'https://izzathykall.github.io/EkspresCilik/'}
+ {id:'song',title:'Bapaku Pulang dari Kota',desc:'Jom dengar dan menyanyi bersama sebelum memulakan pengembaraan!',icon:'music',tag:'01 · Lagu',url:'https://youtu.be/2s6RcKnIFH8?si=Gbhp9ErX7w7kpo83'},
+ {id:'animation',title:'Video Animasi',desc:'Ruang untuk video animasi projek. Pautan video belum disertakan dalam dokumen.',icon:'film',tag:'02 · Video Animasi'},
+ {id:'learning',local:'ekspres-cilik.html',title:'Ruang Pembelajaran',desc:'Terokai laman asal Ekspres Cilik untuk aktiviti pembelajaran interaktif.',icon:'bus',tag:'03 · Ruang Pembelajaran',url:'https://izzathykall.github.io/EkspresCilik/'}
 ];
 function courseCard(c,full=false){return `<article class="course-card ${c.id}"><${full?'div':`a href="#portfolio" data-course="${c.id}"`} class="course-art" ${full?'':`aria-label="Terokai ${c.title}"`}><span class="course-code">${c.code}</span>${icon('sparkle','art-star')}<svg viewBox="0 0 200 240" aria-hidden="true"><use href="#${c.pet}"/></svg><span class="course-number">${c.num}</span></${full?'div':'a'}><div class="course-content"><small>${c.en}</small><h3>${c.title}</h3><p>${c.desc}</p>${full?`<div class="course-rows">${c.rows.map(r=>`<button class="course-row" data-open="${r[2]}"><span class="row-icon" aria-hidden="true">${icon(r[0])}</span>${r[1]}<span class="row-arrow" aria-hidden="true">${icon('external')}</span></button>`).join('')}</div>`:`<a href="#portfolio" data-course="${c.id}" class="card-bottom">Terokai kursus <span class="arrow" aria-hidden="true">${icon('external')}</span></a>`}</div></article>`}
 
 function filterCourses(id){$('#portfolio-courses').innerHTML=courses.filter(c=>id==='all'||c.id===id).map(c=>courseCard(c,true)).join('');document.querySelectorAll('[data-filter]').forEach(b=>{const yes=b.dataset.filter===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)})}
 filterCourses('all');
-function resourceCard(r){return `<article class="resource-card ${r.pet?'illustrated-resource':''}">${r.pet?`<div class="resource-mascot" aria-hidden="true"><svg viewBox="0 0 200 240"><use href="#${r.pet}"/></svg></div>`:''}<span class="resource-icon" aria-hidden="true">${icon(r.icon)}</span><small>${r.tag}</small><h3>${r.title}</h3><p>${r.desc}</p>${r.url?`<a href="${r.url}" target="_blank" rel="noopener noreferrer">Buka ${r.id==='podcast'?'podcast':r.id==='song'?'lagu':'bahan'} <span aria-hidden="true">${icon('external')}</span><span class="sr-only"> (tab baharu)</span></a>`:'<span class="unavailable">Pautan belum disertakan</span>'}${r.local?`<a class="local-activity" href="${r.local}">Buka aktiviti yang dilampirkan ${icon('right')}</a>`:''}</article>`}
+function resourceCard(r){return `<article class="resource-card"><span class="resource-icon" aria-hidden="true">${icon(r.icon)}</span><small>${r.tag}</small><h3>${r.title}</h3><p>${r.desc}</p>${r.url?`<a href="${r.url}" target="_blank" rel="noopener noreferrer">Buka ${r.id==='podcast'?'podcast':r.id==='song'?'lagu':'bahan'} <span aria-hidden="true">${icon('external')}</span><span class="sr-only"> (tab baharu)</span></a>`:'<span class="unavailable">Pautan belum disertakan</span>'}${r.local?`<a class="local-activity" href="${r.local}">Buka aktiviti yang dilampirkan ${icon('right')}</a>`:''}</article>`}
 $('#project-list').innerHTML=projects.map(resourceCard).join('');
 let resourceGroup='all';
 function renderResources(){
