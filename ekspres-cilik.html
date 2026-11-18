@@ -172,7 +172,7 @@
 @media(max-width:600px){.mission-instructions.cilik-guide{grid-template-columns:50px minmax(0,1fr);column-gap:12px;row-gap:10px;padding:13px 14px}.cilik-avatar{grid-row:1;align-self:center;padding:0}.cilik-mascot{width:50px}.cilik-name{font-size:9px;letter-spacing:.6px;margin-bottom:3px}.cilik-message{font-size:13px;line-height:1.5}.panel .cilik-guide .help{grid-column:1 / -1;font-size:14px;line-height:1.65}}
 @media print{.cilik-avatar,.cilik-speech{display:none}}
 </style>
-</head>
+<link rel="stylesheet" href="music.css"></head>
 <body>
 <div class="hub-return" style="padding:10px 20px;background:#f0e9f5;text-align:center;font:700 13px Arial;color:#5e487e"><a href="index.html#projek" style="color:inherit;text-decoration:none"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" style="vertical-align:middle;margin-right:7px" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12H4m6-6-6 6 6 6"/></svg>Kembali ke Digital Learning Hub</a></div><style>@media print{.hub-return{display:none!important}}</style>
 <header><div class="top"><div class="brand"><span class="brand-icon" aria-hidden="true"><svg class="ui-icon icon-bus" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="3" width="16" height="16" rx="3"></rect><path d="M4 11h16M8 3v8M16 3v8M7 19v2M17 19v2"></path><path d="M7 15h1M16 15h1"></path></svg></span><div><strong>Ekspres Cilik</strong><small>Misi Pulang ke Kampung</small></div></div><div class="header-controls"><button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="true" aria-label="Matikan bunyi"><span class="sound-label">Bunyi aktif</span></button><span class="badge">Simulasi pembelajaran</span></div></div></header>
@@ -366,5 +366,5 @@ window.addEventListener('keydown',event=>{if(event.key==='Escape'){if(arrivalJou
 window.addEventListener('hashchange',()=>showBooking(window.location.hash.slice(1)));
 if(document.modelContext?.registerTool){try{Promise.resolve(document.modelContext.registerTool({name:'lihat_kemajuan_cabaran_tiket',description:'Baca misi semasa, mata dan ayat yang telah disimpan dalam permainan Cabaran Tiket.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute(input){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Input mestilah objek kosong.');return{halaman:bookingPage,kumpulan:booking.group,tempatMula:origin,destinasi:getDestination()?.state||null,tarikh:booking.date,kerusi:booking.seat,pintuPelepasan:booking.gate??null,tiketSiap:booking.issued,misi:missionNames[state.stage],mata:points(),lencana:state.done.filter(Boolean).length,penandaWacana:discourseMarkers.filter(marker=>state.writing.includes(marker+', ')),perenggan:paragraphText(),ayat:[...state.sentences]};}})).catch(()=>{});}catch(e){}}
 </script>
-</body>
+<script src="music.js"></script></body>
 </html>
