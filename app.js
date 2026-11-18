@@ -1,9 +1,9 @@
 const $=s=>document.querySelector(s);
 const icon=window.hubIcon;
 const courses=[
- {id:'tekno',code:'EDUP6023',en:'Technology',title:'Teknologi untuk Pengajaran dan Pembelajaran',desc:'Kursus utama: nota, tutorial, tugasan dan projek digital.',pet:'bunny',scene:'scene-read',num:'01',rows:[['book','Nota Pembelajaran','notes-tekno'],['clipboard','Tutorial Minggu 1, 2, 3 dan seterusnya','tutorials'],['folder','Tugasan dan Projek','page:projek'],['video','Video Pembelajaran','videos'],['gallery','Galeri Hasil Kerja','page:galeri']]},
- {id:'sejarah',code:'EDUP6013',en:'History of education',title:'Sejarah Pendidikan di Malaysia',desc:'Kenali perjalanan pendidikan dan kisah di sebaliknya.',pet:'bear',scene:'scene-tech',num:'02',rows:[['book','Nota Pembelajaran','notes-sejarah'],['folder','Tugasan KPPB','kppb-sejarah'],['mic','Audio Temu Bual','interview']]},
- {id:'english',code:'MPU6122',en:'English language',title:'English Language Proficiency',desc:'Explore, express and grow your confidence in English.',pet:'cat',scene:'scene-art',num:'03',rows:[['book','Learning Notes','notes-english'],['folder','KPPB Assignments','kppb-english'],['video','Movie Review','movie']]}
+ {id:'tekno',code:'EDUP6023',en:'Technology',title:'Teknologi untuk Pengajaran dan Pembelajaran',desc:'Kursus utama: nota, tutorial, tugasan dan projek digital.',pet:'nana',scene:'scene-read',num:'01',rows:[['book','Nota Pembelajaran','notes-tekno'],['clipboard','Tutorial Minggu 1, 2, 3 dan seterusnya','tutorials'],['folder','Tugasan dan Projek','page:projek'],['video','Video Pembelajaran','videos'],['gallery','Galeri Hasil Kerja','page:galeri']]},
+ {id:'sejarah',code:'EDUP6013',en:'History of education',title:'Sejarah Pendidikan di Malaysia',desc:'Kenali perjalanan pendidikan dan kisah di sebaliknya.',pet:'didi',scene:'scene-tech',num:'02',rows:[['book','Nota Pembelajaran','notes-sejarah'],['folder','Tugasan KPPB','kppb-sejarah'],['mic','Audio Temu Bual','interview']]},
+ {id:'english',code:'MPU6122',en:'English language',title:'English Language Proficiency',desc:'Explore, express and grow your confidence in English.',pet:'jojo',scene:'scene-art',num:'03',rows:[['book','Learning Notes','notes-english'],['folder','KPPB Assignments','kppb-english'],['video','Movie Review','movie']]}
 ];
 const resources=[
  {id:'intro',title:'Video Pengenalan',desc:'Kenali pembelajaran digital melalui video intro.',icon:'video',tag:'Video · Teknologi',group:'tekno',url:'https://drive.google.com/file/d/18nhTUSDEzggWSfwlYa3z-1Y-UMchM9gh/view?usp=sharing'},
