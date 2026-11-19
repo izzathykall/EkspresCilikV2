@@ -42,10 +42,9 @@ function showPage(){
  document.querySelectorAll('[data-page]').forEach(a=>{const yes=a.dataset.page===valid;a.classList.toggle('active',yes);if(yes)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
  document.title=`${title} · Digital Learning Hub`;
  $('.nav-inner').classList.remove('expanded');$('.menu-toggle').setAttribute('aria-expanded','false');
- $('#flow-progress').textContent='';
  $('#flow-previous').hidden=index===0;
- if(index>0){$('#flow-previous').href=`#${pages[index-1][0]}`;$('#flow-previous').innerHTML=`${icon('left')}<span><small>Sebelumnya</small>${pages[index-1][1]}</span>`}
- const next=pages[(index+1)%pages.length];$('#flow-next').href=`#${next[0]}`;$('#flow-next').innerHTML=`<span><small>${index===pages.length-1?'Kembali ke mula':'Seterusnya'}</small>${next[1]}</span>${icon('right')}`;
+ if(index>0){$('#flow-previous').href=`#${pages[index-1][0]}`;$('#flow-previous').innerHTML=`${icon('left')}<span>${pages[index-1][1]}</span>`;$('#flow-previous').setAttribute('aria-label',`Sebelumnya: ${pages[index-1][1]}`)}
+ const next=pages[(index+1)%pages.length];$('#flow-next').href=`#${next[0]}`;$('#flow-next').innerHTML=`<span>${next[1]}</span>${icon('right')}`;$('#flow-next').setAttribute('aria-label',`Seterusnya: ${next[1]}`);
  if(location.hash){window.scrollTo({top:0,behavior:'instant'});$('#kandungan').focus({preventScroll:true})}
 }
 window.addEventListener('hashchange',showPage);showPage();

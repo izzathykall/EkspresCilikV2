@@ -78,3 +78,18 @@ html[data-motion-paused="true"] .character-motion,.page[hidden] .character-motio
 
 /* Center the gallery project action on desktop and mobile. */
 .gallery-actions{display:flex;justify-content:center;width:100%;margin-top:28px}.gallery-actions>.button{margin:0;text-align:center;max-width:100%}
+
+/* Compact page navigation and a quiet two-line footer. */
+.flow-nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:24px;padding:15px 0 20px;border-top:1px solid #e3e8e8}
+.flow-nav>a{gap:8px;min-width:0;max-width:100%;min-height:44px;padding:6px 0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#527c98;font-size:13px;font-weight:500;line-height:1.5}
+.flow-nav>a:hover{background:transparent;color:#267fa8}
+.flow-nav>a:hover>span{text-decoration:underline;text-underline-offset:4px}
+.flow-nav>a>span{min-width:0;overflow-wrap:break-word}
+.flow-nav>a .ui-icon{flex:0 0 16px;width:16px;height:16px}
+.flow-nav #flow-previous{grid-column:1;grid-row:1;justify-self:start}
+.flow-nav #flow-next{grid-column:2;grid-row:1;justify-self:end;text-align:right}
+footer.site-footer{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:0;padding:20px;border-top:1px solid #e3e8e8;background:var(--paper);text-align:center}
+footer.site-footer .footer-brand{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:800;line-height:1.5;letter-spacing:-.2px;color:#66889d}
+footer.site-footer .footer-brand .ui-icon{width:19px;height:19px}
+footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing:.4px;color:#7e929e}
+@media(max-width:760px){.flow-nav{gap:14px;margin-top:20px;padding:12px 0 16px}.flow-nav>a{font-size:12px}footer.site-footer{padding:18px 20px}}
