@@ -12,6 +12,8 @@
  let volume=preferences&&Number.isFinite(preferences.volume)?clamp(preferences.volume):.25;
  let muted=Boolean(preferences&&preferences.muted),lastVolume=volume||.25;
  let gain=0,transition=null,frame=0,started=false,starting=false,lastSave=0,error=false,leaving=false;
+ let windowAway=false,pageAway=false,resumeOnReturn=false;
+ const isAway=()=>Boolean(document.hidden||windowAway||pageAway);
  const graphic=name=>{
   const paths={music:'<path d="M9 18V5l12-3v13M9 9l12-3"/><ellipse cx="5" cy="19" rx="4" ry="3"/><ellipse cx="17" cy="16" rx="4" ry="3"/>',speaker:'<path d="M3 9h4l5-5v16l-5-5H3zm13-2q6 5 0 10m3-13q9 8 0 16"/>',mute:'<path d="M3 9h4l5-5v16l-5-5H3zm13 0 6 6m0-6-6 6"/>',play:'<path d="m7 4 13 8-13 8z"/>'};
   return `<svg viewBox="0 0 24 24" class="hub-music-icon" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</svg>`;
@@ -54,10 +56,10 @@
  }
  function fade(to,duration=900,done){transition={from:gain,to:clamp(to),at:performance.now(),duration:Math.max(1,duration),done};if(!frame)frame=requestAnimationFrame(tick)}
  async function attempt(){
-  if(error||leaving||starting)return;
+  if(error||leaving||starting||isAway())return;
   if(!audio.paused){update();return}
   starting=true;
-  try{await audio.play()}catch{started=false;update()}finally{starting=false}
+  try{await audio.play()}catch{started=false;update()}finally{starting=false;if(resumeOnReturn&&!isAway())resumeWhenHere()}
  }
  function activate(){
   if(error||leaving)return;
@@ -73,7 +75,7 @@
   volume=clamp(value);if(volume>0)lastVolume=volume;muted=false;audio.muted=false;remember();update();fade(volume,220);attempt();
  }
  audio.addEventListener('loadedmetadata',()=>{if(position&&Number.isFinite(position.time)&&position.time>0&&position.time<audio.duration-1.2){try{audio.currentTime=position.time}catch{}}position=null});
- audio.addEventListener('playing',()=>{if(leaving)return;started=true;gain=0;fade(muted?0:volume,1200);update()});
+ audio.addEventListener('playing',()=>{if(leaving||isAway()){pauseWhenAway();return}started=true;gain=0;fade(muted?0:volume,1200);update()});
  audio.addEventListener('pause',update);
  audio.addEventListener('error',()=>{error=true;transition=null;update()});
  audio.addEventListener('timeupdate',()=>{if(performance.now()-lastSave>1000){savePosition();lastSave=performance.now()}});
@@ -92,8 +94,27 @@
   event.preventDefault();if(leaving)return;leaving=true;
   fade(0,450,()=>{savePosition();audio.pause();location.assign(destination.href)});
  });
- window.addEventListener('pagehide',()=>{savePosition();audio.pause();if(frame)cancelAnimationFrame(frame);frame=0;transition=null;gain=0;audio.volume=0});
- window.addEventListener('pageshow',event=>{if(event.persisted){leaving=false;attempt()}});
+ // Stop immediately when leaving: hidden tabs throttle animation frames,
+ // so audio must not depend on a fade callback to become silent.
+ function pauseWhenAway(){
+  resumeOnReturn=resumeOnReturn||!audio.paused||starting;
+  const finishNavigation=leaving&&transition?transition.done:null;
+  if(frame)cancelAnimationFrame(frame);
+  frame=0;transition=null;gain=0;audio.volume=0;audio.muted=muted;
+  savePosition();audio.pause();setOpen(false);update();
+  if(finishNavigation)finishNavigation();
+ }
+ function resumeWhenHere(){
+  if(isAway()||leaving||starting)return;
+  if(resumeOnReturn||!started){resumeOnReturn=false;attempt()}
+ }
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)pauseWhenAway();else{windowAway=false;resumeWhenHere()}
+ });
+ window.addEventListener('blur',()=>{windowAway=true;pauseWhenAway()});
+ window.addEventListener('focus',()=>{windowAway=false;resumeWhenHere()});
+ window.addEventListener('pagehide',()=>{pageAway=true;pauseWhenAway()});
+ window.addEventListener('pageshow',event=>{pageAway=false;if(event.persisted){leaving=false;windowAway=false}resumeWhenHere()});
  window.HubMusic={start:activate,setVolume:changeVolume,toggleMute};
  document.body.append(audio);audio.src='lagu-bapaku-pulang.mp3';update();attempt();
 })();
