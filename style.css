@@ -115,3 +115,8 @@ footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing
 .course-filters::-webkit-scrollbar,.resource-tabs::-webkit-scrollbar{height:3px}
 .course-filters::-webkit-scrollbar-thumb,.resource-tabs::-webkit-scrollbar-thumb{background:#c5dce8;border-radius:3px}
 @media(max-width:380px){.contributor-list>.contributor{gap:10px}.collaborators.contributor-list p{font-size:11px}}
+
+/* Fit every filter in the available width, with no wrapping or scrolling. */
+.course-filters,.resource-tabs{display:flex;flex-wrap:nowrap;gap:6px;width:100%;max-width:100%;padding:3px 0;overflow:hidden;scrollbar-width:none;touch-action:auto;overscroll-behavior-x:auto}
+.course-filters>.chip,.resource-tabs>.chip{display:block;flex:1 1 auto;min-width:0;max-width:100%;padding:9px 6px;white-space:nowrap;font-size:var(--filter-label-size,12px);line-height:1.4;letter-spacing:0}
+.course-filters .chip-label,.resource-tabs .chip-label{display:block;min-width:0;max-width:100%;white-space:nowrap;overflow-wrap:normal;word-break:normal}
