@@ -62,3 +62,24 @@ body{font-size:15px;line-height:1.75}p{line-height:1.85}h1,h2,h3{font-weight:800
 @media(max-width:380px){.hero h1{font-size:40px}.hero .eyebrow{font-size:8px}.site-header.has-music-controls>.brand small{font-size:6px;letter-spacing:.1px}}
 /* Keep small labels and links legible against the pale character palette. */
 .eyebrow{color:#587d96}.hero .eyebrow{color:#8a7237}.hero-copy>p,.prose p{color:#65788a}.course-row{color:#61788a}.course-content>small,.english .course-content>small,.sejarah .course-content>small{color:#6a8295}.resource-card small{color:#688197}.resource-card>a,.text-link{color:#347b9f}.chip{color:#637c8e}.chip.selected{color:#327da4}.collaborators p{color:#7f7480}.resource-card.has-resource-qr>a[aria-label]{color:#3a7e9f}.resource-qr figcaption{color:#708795}.friends-art>span{color:#947888}.flow-nav>a{color:#527c98}.flow-nav>a small{color:#7b94a5}.character-source,.character-source a{color:#718b9d}body .hub-music .hub-music-panel>strong{color:#577e96}body .hub-music .hub-music-mute{color:#4d7d99}body .hub-music .hub-music-volume output,body .hub-music .hub-volume-high,body .hub-music .hub-volume-low{color:#668497}
+
+/* Gentle character motion; scene backgrounds and reading content stay still. */
+.hero-art{animation:none}
+.character-motion{transform-box:fill-box;transform-origin:50% 100%;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.character-didi{animation-name:didi-greet;animation-duration:4.8s;animation-delay:-.6s}
+.character-nana{animation-name:nana-read;animation-duration:5.6s;animation-delay:-1.8s}
+.character-jojo{animation-name:jojo-sway;animation-duration:5.2s;animation-delay:-2.7s}
+.tiny-faces .character-motion{animation:none}
+@keyframes didi-greet{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-4px) rotate(-1.5deg)}50%{transform:translateY(-1px) rotate(.8deg)}75%{transform:translateY(-3px) rotate(-.8deg)}}
+@keyframes nana-read{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-3px) rotate(.8deg)}}
+@keyframes jojo-sway{0%,100%{transform:translateY(0) rotate(1deg)}50%{transform:translateY(-4px) rotate(-1.2deg)}}
+html[data-motion-paused="true"] .character-motion,.page[hidden] .character-motion{animation-play-state:paused}
+.motion-control{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid #d4e7ef;border-radius:999px;background:#f0f8fc;color:#52788d;font:inherit;font-size:11px;line-height:1.5;cursor:pointer;min-height:34px}
+.motion-control[hidden]{display:none}
+.motion-control:hover{background:#e5f3fa;border-color:#a9cfdf}
+.motion-control:focus-visible{outline:3px solid #71b4d3;outline-offset:3px}
+.motion-control svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.motion-control:disabled{cursor:default;opacity:.75}
+.hero-copy>.motion-control{margin-top:20px}
+footer>.motion-control{margin-top:16px}
+@media(prefers-reduced-motion:reduce){.character-motion{animation:none!important}}
