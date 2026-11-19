@@ -66,27 +66,10 @@ const collections={
 function openResource(id){if(id.startsWith('page:')){location.hash=id.slice(5);return}let info=collections[id];if(!info){const r=resources.find(r=>r.id===id);if(r)info={title:r.title,label:r.tag,icon:r.icon,text:r.desc,items:r.url?[r.id]:[],missing:r.url?'':'Pautan bahan belum disertakan.'}}if(!info)return;$('#dialog-icon').innerHTML=icon(info.icon);$('#dialog-label').textContent=info.label;$('#dialog-title').textContent=info.title;$('#dialog-body').innerHTML=`<p>${info.text}</p>${info.missing?`<div class="empty-state">${icon('leaf')} ${info.missing}</div>`:''}`;$('#dialog-actions').innerHTML=(info.items||[]).map(id=>resources.find(r=>r.id===id)).filter(Boolean).map(r=>`<a class="button primary" href="${r.url}" target="_blank" rel="noopener noreferrer">${icon(r.icon)} ${r.title} <span>${icon('external')}</span></a>`).join('');dialog.showModal()}
 $('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});
 
-/* Character animation controls. */
+/* Keep decorative motion in step with system and page visibility. */
 (() => {
- const controls=[...document.querySelectorAll('[data-motion-toggle]')];
- if(!controls.length)return;
  const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
- let paused=false;
- try{paused=localStorage.getItem('hub-character-motion')==='paused'}catch{}
- function update(){
-  document.documentElement.dataset.motionPaused=String(paused||preference.matches||document.hidden);
-  controls.forEach(button=>{
-   button.hidden=false;
-   button.disabled=preference.matches;
-   button.querySelector('[data-motion-label]').textContent=preference.matches?'Gerakan dikurangkan':paused?'Mainkan animasi':'Hentikan animasi';
-   button.querySelector('[data-motion-icon]').setAttribute('d',paused?'m8 5 11 7-11 7z':'M8 5v14M16 5v14');
-  });
- }
- controls.forEach(button=>button.addEventListener('click',()=>{
-  paused=!paused;
-  try{localStorage.setItem('hub-character-motion',paused?'paused':'playing')}catch{}
-  update();
- }));
+ const update=()=>{document.documentElement.dataset.motionPaused=String(preference.matches||document.hidden)};
  preference.addEventListener('change',update);
  document.addEventListener('visibilitychange',update);
  update();
