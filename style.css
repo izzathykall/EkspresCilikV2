@@ -100,3 +100,18 @@ footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing
 .flow-nav>a>span{flex:1 1 0;width:0;white-space:nowrap;overflow-wrap:normal;word-break:normal;text-align:center;font-size:var(--flow-label-size,inherit)}
 .flow-nav #flow-next{text-align:center}
 @media(max-width:760px){.flow-nav{gap:12px}.flow-nav>a{gap:6px;padding:10px 8px}.flow-nav>a .ui-icon{flex-basis:14px;width:14px;height:14px}}
+
+/* Contributor portraits stay beside their full names in two tidy rows. */
+.collaborators.contributor-list{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;list-style:none;margin:0;padding:24px 0}
+.contributor-list>.contributor{display:flex;align-items:center;gap:12px;min-width:0;margin:0;padding:0}
+.contributor-list .contributor-avatar{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:50%;background:#e9eff4;color:#7894a8;overflow:hidden}
+.contributor-list>.contributor:nth-child(2) .contributor-avatar{background:#efe8f2;color:#a18aaa}
+.contributor-list .contributor-avatar svg{display:block;width:24px;height:24px}
+.contributor-list .contributor-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+.collaborators.contributor-list p{flex:1;min-width:0;margin:0;font-size:12px;line-height:1.65;color:#657587;overflow-wrap:break-word}
+/* Keep every filter on one row; smaller screens can swipe through the row. */
+.course-filters,.resource-tabs{flex-wrap:nowrap;align-items:center;gap:8px;width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;padding:4px 2px 8px;scroll-padding-inline:2px;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#c5dce8 transparent}
+.course-filters>.chip,.resource-tabs>.chip{flex:0 0 auto;white-space:nowrap}
+.course-filters::-webkit-scrollbar,.resource-tabs::-webkit-scrollbar{height:3px}
+.course-filters::-webkit-scrollbar-thumb,.resource-tabs::-webkit-scrollbar-thumb{background:#c5dce8;border-radius:3px}
+@media(max-width:380px){.contributor-list>.contributor{gap:10px}.collaborators.contributor-list p{font-size:11px}}
