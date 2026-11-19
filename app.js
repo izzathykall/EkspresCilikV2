@@ -63,12 +63,21 @@ function fitFilterLabels(){
  });
 }
 function fitPageControls(){fitFlowLabels();fitFilterLabels()}
+function setMenuOpen(open,returnFocus=false){
+ const button=$('.menu-toggle'),links=$('.nav-inner');
+ links.classList.toggle('expanded',open);
+ button.setAttribute('aria-expanded',String(open));
+ button.setAttribute('aria-label',open?'Tutup menu utama':'Buka menu utama');
+ button.querySelector('span').textContent=open?'Tutup':'Menu';
+ button.querySelector('use').setAttribute('href',open?'#i-close':'#i-menu');
+ if(returnFocus)button.focus({preventScroll:true});
+}
 function showPage(){
  const id=location.hash.slice(1)||'pengenalan';const index=Math.max(0,pages.findIndex(p=>p[0]===id));const [valid,title]=pages[index];
  document.querySelectorAll('.page').forEach(p=>{p.hidden=p.id!==valid;p.classList.toggle('active',p.id===valid)});
  document.querySelectorAll('[data-page]').forEach(a=>{const yes=a.dataset.page===valid;a.classList.toggle('active',yes);if(yes)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
  document.title=`${title} · Digital Learning Hub`;
- $('.nav-inner').classList.remove('expanded');$('.menu-toggle').setAttribute('aria-expanded','false');
+ setMenuOpen(false);
  $('#flow-previous').hidden=index===0;
  if(index>0){$('#flow-previous').href=`#${pages[index-1][0]}`;$('#flow-previous').innerHTML=`${icon('left')}<span>${pages[index-1][1]}</span>`;$('#flow-previous').setAttribute('aria-label',`Sebelumnya: ${pages[index-1][1]}`)}
  const next=pages[(index+1)%pages.length];$('#flow-next').href=`#${next[0]}`;$('#flow-next').innerHTML=`<span>${next[1]}</span>${icon('right')}`;$('#flow-next').setAttribute('aria-label',`Seterusnya: ${next[1]}`);
@@ -79,7 +88,10 @@ window.addEventListener('hashchange',showPage);showPage();
 window.addEventListener('resize',fitPageControls);
 if(document.fonts)document.fonts.ready.then(fitPageControls);
 document.addEventListener('click',event=>{if(event.target.closest('[data-filter],[data-resource]'))requestAnimationFrame(fitFilterLabels)});
-$('.menu-toggle').addEventListener('click',()=>{const expanded=$('.nav-inner').classList.toggle('expanded');$('.menu-toggle').setAttribute('aria-expanded',expanded)});
+$('.menu-toggle').addEventListener('click',()=>setMenuOpen($('.menu-toggle').getAttribute('aria-expanded')!=='true'));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&$('.nav-inner').classList.contains('expanded')){event.preventDefault();setMenuOpen(false,true)}});
+document.addEventListener('click',event=>{if(event.target.closest('[data-page]')||!event.target.closest('#main-nav,.menu-toggle'))setMenuOpen(false)});
+window.matchMedia('(max-width: 760px)').addEventListener('change',()=>setMenuOpen(false));
 document.addEventListener('click',e=>{const course=e.target.closest('[data-course]');if(course)filterCourses(course.dataset.course);const filter=e.target.closest('[data-filter]');if(filter)filterCourses(filter.dataset.filter);const tab=e.target.closest('[data-resource]');if(tab){resourceGroup=tab.dataset.resource;document.querySelectorAll('[data-resource]').forEach(b=>{const yes=b===tab;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});renderResources()}const open=e.target.closest('[data-open]');if(open)openResource(open.dataset.open)});
 const fullContent=window.HUB_CONTENT||{};
 for(const [key,selector] of [['intro','#intro-full'],['portfolio','#portfolio-full'],['closing','#closing-full']]){$(selector).innerHTML=(fullContent[key]||[]).map(p=>`<p>${p}</p>`).join('')}
