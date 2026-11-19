@@ -36,6 +36,17 @@ function renderResources(){
 }
 renderResources();$('#search').addEventListener('input',renderResources);
 const pages=[['pengenalan','Pengenalan'],['portfolio','My Learning Portfolio'],['projek','Tugasan dan Projek'],['kuiz','Uji Kefahaman'],['galeri','Galeri Hasil Kerja'],['bahan','Folder Bahan Pembelajaran'],['penutup','Penutup']];
+// Match both label sizes to the space available after the arrow and padding.
+function fitFlowLabels(){
+ const nav=$('.flow-nav');
+ if(!nav)return;
+ nav.style.removeProperty('--flow-label-size');
+ const labels=[...nav.querySelectorAll('a')].filter(a=>!a.hidden).map(a=>a.querySelector('span')).filter(Boolean);
+ if(!labels.length)return;
+ const base=parseFloat(getComputedStyle(labels[0]).fontSize);
+ const ratio=Math.min(1,...labels.filter(label=>label.clientWidth>0&&label.scrollWidth>0).map(label=>label.clientWidth/label.scrollWidth));
+ if(ratio<1)nav.style.setProperty('--flow-label-size',`${Math.max(1,Math.floor((base*ratio-.15)*10)/10)}px`);
+}
 function showPage(){
  const id=location.hash.slice(1)||'pengenalan';const index=Math.max(0,pages.findIndex(p=>p[0]===id));const [valid,title]=pages[index];
  document.querySelectorAll('.page').forEach(p=>{p.hidden=p.id!==valid;p.classList.toggle('active',p.id===valid)});
@@ -45,9 +56,12 @@ function showPage(){
  $('#flow-previous').hidden=index===0;
  if(index>0){$('#flow-previous').href=`#${pages[index-1][0]}`;$('#flow-previous').innerHTML=`${icon('left')}<span>${pages[index-1][1]}</span>`;$('#flow-previous').setAttribute('aria-label',`Sebelumnya: ${pages[index-1][1]}`)}
  const next=pages[(index+1)%pages.length];$('#flow-next').href=`#${next[0]}`;$('#flow-next').innerHTML=`<span>${next[1]}</span>${icon('right')}`;$('#flow-next').setAttribute('aria-label',`Seterusnya: ${next[1]}`);
+ requestAnimationFrame(fitFlowLabels);
  if(location.hash){window.scrollTo({top:0,behavior:'instant'});$('#kandungan').focus({preventScroll:true})}
 }
 window.addEventListener('hashchange',showPage);showPage();
+window.addEventListener('resize',fitFlowLabels);
+if(document.fonts)document.fonts.ready.then(fitFlowLabels);
 $('.menu-toggle').addEventListener('click',()=>{const expanded=$('.nav-inner').classList.toggle('expanded');$('.menu-toggle').setAttribute('aria-expanded',expanded)});
 document.addEventListener('click',e=>{const course=e.target.closest('[data-course]');if(course)filterCourses(course.dataset.course);const filter=e.target.closest('[data-filter]');if(filter)filterCourses(filter.dataset.filter);const tab=e.target.closest('[data-resource]');if(tab){resourceGroup=tab.dataset.resource;document.querySelectorAll('[data-resource]').forEach(b=>{const yes=b===tab;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});renderResources()}const open=e.target.closest('[data-open]');if(open)openResource(open.dataset.open)});
 const fullContent=window.HUB_CONTENT||{};

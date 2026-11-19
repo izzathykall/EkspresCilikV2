@@ -93,3 +93,10 @@ footer.site-footer .footer-brand{display:inline-flex;align-items:center;gap:6px;
 footer.site-footer .footer-brand .ui-icon{width:19px;height:19px}
 footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing:.4px;color:#7e929e}
 @media(max-width:760px){.flow-nav{gap:14px;margin-top:20px;padding:12px 0 16px}.flow-nav>a{font-size:12px}footer.site-footer{padding:18px 20px}}
+
+/* Equal navigation boxes with complete single-line labels. */
+.flow-nav{align-items:stretch}
+.flow-nav>a{width:100%;max-width:280px;height:52px;min-height:52px;justify-content:center;flex-wrap:nowrap;padding:10px 12px;white-space:nowrap}
+.flow-nav>a>span{flex:1 1 0;width:0;white-space:nowrap;overflow-wrap:normal;word-break:normal;text-align:center;font-size:var(--flow-label-size,inherit)}
+.flow-nav #flow-next{text-align:center}
+@media(max-width:760px){.flow-nav{gap:12px}.flow-nav>a{gap:6px;padding:10px 8px}.flow-nav>a .ui-icon{flex-basis:14px;width:14px;height:14px}}
