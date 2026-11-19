@@ -24,21 +24,55 @@
  if(host){const menu=host.querySelector('.menu-toggle');if(menu)host.insertBefore(player,menu);else host.append(player);host.classList.add('has-music-controls')}else{document.body.prepend(player);player.classList.add('hub-music-standalone')}
  const status=player.querySelector('#hub-music-status'),startButton=player.querySelector('.hub-music-start'),muteButton=player.querySelector('.hub-music-mute'),slider=player.querySelector('input'),output=player.querySelector('output'),toggleButton=player.querySelector('.hub-music-toggle'),panel=player.querySelector('#hub-music-panel');
  function setOpen(open,returnFocus=false){panel.hidden=!open;toggleButton.setAttribute('aria-expanded',String(open));if(open)slider.focus({preventScroll:true});else if(returnFocus)toggleButton.focus({preventScroll:true})}
- toggleButton.addEventListener('click',()=>{setOpen(panel.hidden);if(!started&&!muted&&volume>0)attempt()});
+ toggleButton.addEventListener('click',()=>{unlockAudio();setOpen(panel.hidden);if(!muted&&volume>0)attempt()});
  document.addEventListener('click',event=>{if(!player.contains(event.target))setOpen(false)});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();setOpen(false,true)}});
  player.addEventListener('focusout',event=>{if(event.relatedTarget&&!player.contains(event.relatedTarget))setOpen(false)});
  slider.addEventListener('keydown',event=>{let next;if(event.key==='ArrowUp')next=volume+.05;else if(event.key==='ArrowDown')next=volume-.05;else if(event.key==='Home')next=0;else if(event.key==='End')next=1;else return;event.preventDefault();changeVolume(next)});
 
- const audio=document.createElement('audio');audio.id='hub-background-music';audio.loop=true;audio.autoplay=true;audio.preload='auto';audio.volume=0;audio.muted=muted;audio.setAttribute('aria-hidden','true');
+ const audio=document.createElement('audio');audio.id='hub-background-music';audio.loop=true;audio.autoplay=true;audio.preload='auto';try{audio.volume=0}catch{}audio.muted=muted;audio.setAttribute('aria-hidden','true');
+ // Safari on iPhone ignores HTMLMediaElement.volume. Route the track through
+ // one GainNode instead, while retaining HTML audio as a compatibility fallback.
+ let audioContext=null,gainNode=null,mediaSource=null,graphUnavailable=false;
+ function graphReady(){return !audioContext||audioContext.state==='running'}
+ function setOutputGain(value){
+  const level=clamp(value);
+  if(gainNode)gainNode.gain.value=level;else{try{audio.volume=level}catch{}}
+ }
+ function prepareAudioGraph(){
+  if(audioContext||graphUnavailable)return;
+  const Context=window.AudioContext||window.webkitAudioContext;
+  if(!Context){graphUnavailable=true;return}
+  let context=null,source=null,node=null;
+  try{
+   context=new Context();node=context.createGain();node.gain.value=clamp(gain*envelope());
+   node.connect(context.destination);
+   source=context.createMediaElementSource(audio);source.connect(node);
+   audioContext=context;gainNode=node;mediaSource=source;
+   try{audio.volume=1}catch{}
+   if(context.addEventListener)context.addEventListener('statechange',update);else context.onstatechange=update;
+  }catch{
+   // If routing failed after source creation, preserve an audible fallback path.
+   if(source&&context){try{source.disconnect();source.connect(context.destination);audioContext=context}catch{}}
+   else if(context){try{const closed=context.close();if(closed&&closed.catch)closed.catch(()=>{})}catch{}}
+   graphUnavailable=true;
+  }
+ }
+ function unlockAudio(){
+  if(error||leaving||isAway())return;
+  prepareAudioGraph();
+  if(audioContext&&audioContext.state!=='running'){
+   try{const resumed=audioContext.resume();if(resumed&&resumed.catch)resumed.catch(update)}catch{update()}
+  }
+ }
  function remember(){try{write(window.localStorage,PREF,{volume,muted})}catch{}}
  function savePosition(){if(Number.isFinite(audio.currentTime)){try{write(window.sessionStorage,POSITION,{time:audio.currentTime})}catch{}}}
  function update(){
   const silent=muted||volume===0;
   muteButton.innerHTML=graphic(silent?'mute':'speaker');toggleButton.innerHTML=graphic(silent?'mute':'speaker');muteButton.setAttribute('aria-pressed',String(silent));muteButton.setAttribute('aria-label',silent?'Hidupkan bunyi muzik':'Senyapkan muzik');muteButton.title=silent?'Hidupkan bunyi':'Senyapkan muzik';toggleButton.title=silent?'Tetapan bunyi · Mute':'Tetapan bunyi';
   slider.value=String(Math.round(volume*100));slider.setAttribute('aria-valuetext',`${Math.round(volume*100)} peratus`);output.value=`${Math.round(volume*100)}%`;output.textContent=output.value;
-  status.textContent=error?'Fail muzik tidak dapat dimainkan':silent?'Muzik disenyapkan':started&&!audio.paused?'Sedang dimainkan · Berulang':'Klik untuk memainkan muzik';
-  startButton.hidden=started&&!audio.paused||error||silent;muteButton.hidden=!startButton.hidden;
+  status.textContent=error?'Fail muzik tidak dapat dimainkan':silent?'Muzik disenyapkan':started&&!audio.paused&&graphReady()?'Sedang dimainkan · Berulang':'Klik untuk memainkan muzik';
+  startButton.hidden=started&&!audio.paused&&graphReady()||error||silent;muteButton.hidden=!startButton.hidden;
   if(startButton.hidden&&document.activeElement===startButton)muteButton.focus({preventScroll:true});
   player.classList.toggle('hub-music-silent',silent);
  }
@@ -51,27 +85,31 @@
  function tick(now){
   frame=0;
   if(transition){const t=Math.max(0,Math.min(1,(now-transition.at)/transition.duration));const eased=t*t*(3-2*t);gain=transition.from+(transition.to-transition.from)*eased;if(t===1){const done=transition.done;transition=null;if(done)done()}}
-  audio.volume=clamp(gain*envelope());
+  setOutputGain(gain*envelope());
   if(!audio.paused||transition)frame=requestAnimationFrame(tick);
  }
  function fade(to,duration=900,done){transition={from:gain,to:clamp(to),at:performance.now(),duration:Math.max(1,duration),done};if(!frame)frame=requestAnimationFrame(tick)}
  async function attempt(){
   if(error||leaving||starting||isAway())return;
+  unlockAudio();
   if(!audio.paused){update();return}
   starting=true;
   try{await audio.play()}catch{started=false;update()}finally{starting=false;if(resumeOnReturn&&!isAway())resumeWhenHere()}
  }
  function activate(){
   if(error||leaving)return;
+  unlockAudio();
   muted=false;if(volume===0)volume=lastVolume||.25;audio.muted=false;remember();fade(volume);update();attempt();
  }
  function toggleMute(){
   if(leaving)return;
+  unlockAudio();
   if(muted||volume===0){activate();return}
   muted=true;remember();update();fade(0,450,()=>{if(muted)audio.muted=true});
  }
  function changeVolume(value){
   if(leaving)return;
+  unlockAudio();
   volume=clamp(value);if(volume>0)lastVolume=volume;muted=false;audio.muted=false;remember();update();fade(volume,220);attempt();
  }
  audio.addEventListener('loadedmetadata',()=>{if(position&&Number.isFinite(position.time)&&position.time>0&&position.time<audio.duration-1.2){try{audio.currentTime=position.time}catch{}}position=null});
@@ -79,10 +117,16 @@
  audio.addEventListener('pause',update);
  audio.addEventListener('error',()=>{error=true;transition=null;update()});
  audio.addEventListener('timeupdate',()=>{if(performance.now()-lastSave>1000){savePosition();lastSave=performance.now()}});
- slider.addEventListener('input',()=>changeVolume(Number(slider.value)/100));muteButton.addEventListener('click',toggleMute);
+ slider.addEventListener('pointerdown',unlockAudio,{passive:true});
+ slider.addEventListener('touchstart',unlockAudio,{passive:true});
+ slider.addEventListener('input',()=>changeVolume(Number(slider.value)/100));
+ slider.addEventListener('change',()=>changeVolume(Number(slider.value)/100));
+ muteButton.addEventListener('click',toggleMute);
  document.addEventListener('click',event=>{const button=event.target.closest('[data-music-start]');if(button){activate();if(!player.contains(button))slider.focus({preventScroll:true})}});
- const gesture=event=>{if(!started&&!muted&&volume>0&&!event.target.closest('[data-music-mute], .hub-music-volume'))attempt()};
+ const gesture=event=>{if(!muted&&volume>0&&!event.target.closest('[data-music-mute], .hub-music-volume')){unlockAudio();if(!started||!graphReady())attempt()}};
  document.addEventListener('pointerdown',gesture,{passive:true});
+ document.addEventListener('touchend',gesture,{passive:true});
+ document.addEventListener('click',gesture);
  document.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' ')gesture(event)});
  // Fade before moving between the two supplied HTML pages, then resume the track.
  document.addEventListener('click',event=>{
@@ -100,7 +144,7 @@
   resumeOnReturn=resumeOnReturn||!audio.paused||starting;
   const finishNavigation=leaving&&transition?transition.done:null;
   if(frame)cancelAnimationFrame(frame);
-  frame=0;transition=null;gain=0;audio.volume=0;audio.muted=muted;
+  frame=0;transition=null;gain=0;setOutputGain(0);audio.muted=muted;
   savePosition();audio.pause();setOpen(false);update();
   if(finishNavigation)finishNavigation();
  }
@@ -116,5 +160,5 @@
  window.addEventListener('pagehide',()=>{pageAway=true;pauseWhenAway()});
  window.addEventListener('pageshow',event=>{pageAway=false;if(event.persisted){leaving=false;windowAway=false}resumeWhenHere()});
  window.HubMusic={start:activate,setVolume:changeVolume,toggleMute};
- document.body.append(audio);audio.src='lagu-bapaku-pulang.mp3';update();attempt();
+ document.body.append(audio);prepareAudioGraph();audio.src='lagu-bapaku-pulang.mp3';update();attempt();
 })();

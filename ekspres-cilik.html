@@ -366,5 +366,5 @@ window.addEventListener('keydown',event=>{if(event.key==='Escape'){if(arrivalJou
 window.addEventListener('hashchange',()=>showBooking(window.location.hash.slice(1)));
 if(document.modelContext?.registerTool){try{Promise.resolve(document.modelContext.registerTool({name:'lihat_kemajuan_cabaran_tiket',description:'Baca misi semasa, mata dan ayat yang telah disimpan dalam permainan Cabaran Tiket.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute(input){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Input mestilah objek kosong.');return{halaman:bookingPage,kumpulan:booking.group,tempatMula:origin,destinasi:getDestination()?.state||null,tarikh:booking.date,kerusi:booking.seat,pintuPelepasan:booking.gate??null,tiketSiap:booking.issued,misi:missionNames[state.stage],mata:points(),lencana:state.done.filter(Boolean).length,penandaWacana:discourseMarkers.filter(marker=>state.writing.includes(marker+', ')),perenggan:paragraphText(),ayat:[...state.sentences]};}})).catch(()=>{});}catch(e){}}
 </script>
-<script src="music.js"></script></body>
+<script src="music.js?v=20261119-ios-volume"></script></body>
 </html>
