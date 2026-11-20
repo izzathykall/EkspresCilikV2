@@ -24,7 +24,11 @@ palette:'<path d="M12 2C-1 2-2 22 11 22c6 0-1-7 5-7 10 0 7-13-4-13z"/><circle cx
 friends:'<circle cx="8" cy="7" r="3"/><circle cx="18" cy="8" r="3"/><path d="M1 21v-4a7 7 0 0 1 14 0v4m2-8a6 6 0 0 1 6 6v2"/>',
 menu:'<path d="M3 5h18M3 12h18M3 19h18"/>',
 bus:'<rect x="2" y="4" width="20" height="15" rx="4" fill="#efbd72"/><path d="M3 13h18M8 4v9m8-9v9"/><circle cx="6" cy="20" r="2" fill="#75618c"/><circle cx="18" cy="20" r="2" fill="#75618c"/><path d="M6 16h1m10 0h1"/>',
-star:'<path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1z"/>'
+star:'<path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1z"/>',
+settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a8 8 0 0 0 0-6l1.4-1.1-1.4-2.4-1.7.6a8 8 0 0 0-1.5-.9L16 3h-8l-.3 2.2a8 8 0 0 0-1.5.9l-1.7-.6-1.4 2.4L4.5 9a8 8 0 0 0 0 6l-1.4 1.1 1.4 2.4 1.7-.6a8 8 0 0 0 1.5.9L8 21h8l.3-2.2a8 8 0 0 0 1.5-.9l1.7.6 1.4-2.4z"/>',
+'volume-2':'<path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/>',
+link:'<path d="M10 13a5 5 0 0 0 7.1 0l3-3A5 5 0 0 0 13 2.9l-1.7 1.7m2.7 6.4a5 5 0 0 0-7.1 0l-3 3A5 5 0 0 0 11 21.1l1.7-1.7"/>',
+'folder-plus':'<path d="M3 9V5a2 2 0 0 1 2-2h5l3 3h6a2 2 0 0 1 2 2v2M2 10h20l-3 11H5zM12 12v6m-3-3h6"/>'
 };
 document.body.insertAdjacentHTML('afterbegin',`<svg xmlns="http://www.w3.org/2000/svg" class="svg-defs" aria-hidden="true"><defs>${Object.entries(paths).map(([name,path])=>`<symbol id="i-${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${path}</symbol>`).join('')}</defs></svg>`);
 window.hubIcon=(name,extra='')=>`<svg class="ui-icon ${extra}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
