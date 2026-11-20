@@ -23,6 +23,7 @@ ticket:'<path d="M3 4h18v5a3 3 0 0 0 0 6v5H3v-5a3 3 0 0 0 0-6zm12 1v2m0 3v2m0 3v
 palette:'<path d="M12 2C-1 2-2 22 11 22c6 0-1-7 5-7 10 0 7-13-4-13z"/><circle cx="7" cy="8" r="1"/><circle cx="13" cy="6" r="1"/><circle cx="18" cy="9" r="1"/><circle cx="5" cy="14" r="1"/>',
 friends:'<circle cx="8" cy="7" r="3"/><circle cx="18" cy="8" r="3"/><path d="M1 21v-4a7 7 0 0 1 14 0v4m2-8a6 6 0 0 1 6 6v2"/>',
 menu:'<path d="M3 5h18M3 12h18M3 19h18"/>',
+edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
 bus:'<rect x="2" y="4" width="20" height="15" rx="4" fill="#efbd72"/><path d="M3 13h18M8 4v9m8-9v9"/><circle cx="6" cy="20" r="2" fill="#75618c"/><circle cx="18" cy="20" r="2" fill="#75618c"/><path d="M6 16h1m10 0h1"/>',
 star:'<path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1z"/>'
 };

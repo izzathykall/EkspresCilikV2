@@ -1,5 +1,13 @@
 const $=s=>document.querySelector(s);
 const icon=window.hubIcon;
+/* Pautan boleh diubah: nilai asal di bawah ditimpa oleh pautan dalam Firebase (ekspresCilik/links). */
+const LINK_CACHE='dlh-links-v2';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=v=>{try{const u=new URL(String(v||'').trim());return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}};
+const sanitizeLinks=raw=>{const out={};if(raw&&typeof raw==='object')for(const [k,v] of Object.entries(raw)){const u=safeUrl(v);if(u)out[k]=u}return out};
+let linkOverrides={};
+try{linkOverrides=sanitizeLinks(JSON.parse(localStorage.getItem(LINK_CACHE)||'{}'))}catch{}
+const linkFor=(id,fallback='')=>linkOverrides[id]||fallback||'';
 const courses=[
  {id:'tekno',code:'EDUP6023',en:'Technology',title:'Teknologi untuk Pengajaran dan Pembelajaran',desc:'Kursus utama: nota, tutorial, tugasan dan projek digital.',pet:'nana',scene:'scene-read',num:'01',rows:[['book','Nota Pembelajaran','notes-tekno'],['clipboard','Tutorial Minggu 1, 2, 3 dan seterusnya','tutorials'],['folder','Tugasan dan Projek','page:projek'],['video','Video Pembelajaran','videos'],['gallery','Galeri Hasil Kerja','page:galeri']]},
  {id:'sejarah',code:'EDUP6013',en:'History of education',title:'Sejarah Pendidikan di Malaysia',desc:'Kenali perjalanan pendidikan dan kisah di sebaliknya.',pet:'didi',scene:'scene-tech',num:'02',rows:[['book','Nota Pembelajaran','notes-sejarah'],['folder','Tugasan KPPB','kppb-sejarah'],['mic','Audio Temu Bual','interview']]},
@@ -17,7 +25,7 @@ const projects=[
  {id:'animation',title:'Video Animasi',desc:'Ruang untuk video animasi projek. Pautan video belum disertakan dalam dokumen.',icon:'film',tag:'Video Animasi'},
  {id:'learning',title:'Ruang Pembelajaran',desc:'Terokai laman asal Ekspres Cilik untuk aktiviti pembelajaran interaktif.',icon:'bus',tag:'Ruang Pembelajaran',url:'https://izzathykall.github.io/EkspresCilik/'}
 ];
-function courseCard(c,full=false){return `<article class="course-card ${c.id}"><${full?'div':`a href="#portfolio" data-course="${c.id}"`} class="course-art" ${full?'':`aria-label="Terokai ${c.title}"`}><span class="course-code">${c.code}</span>${icon('sparkle','art-star')}<svg class="course-scene" viewBox="0 0 320 280" aria-hidden="true"><use href="#${c.scene}"/></svg></${full?'div':'a'}><div class="course-content"><small>${c.en}</small><h3>${c.title}</h3><p>${c.desc}</p>${full?`<div class="course-rows">${c.rows.map(r=>`<button class="course-row" data-open="${r[2]}"><span class="row-icon" aria-hidden="true">${icon(r[0])}</span>${r[1]}<span class="row-arrow" aria-hidden="true">${icon('external')}</span></button>`).join('')}</div>`:`<a href="#portfolio" data-course="${c.id}" class="card-bottom">Terokai kursus <span class="arrow" aria-hidden="true">${icon('external')}</span></a>`}</div></article>`}
+function courseCard(c,full=false){return `<article class="course-card ${c.id}"><${full?'div':`a href="#portfolio" data-course="${c.id}"`} class="course-art" ${full?'':`aria-label="Terokai ${c.title}"`}><span class="course-code">${c.code}</span>${icon('sparkle','art-star')}<svg class="course-scene" viewBox="0 0 320 280" aria-hidden="true"><use href="#${c.scene}"/></svg></${full?'div':'a'}><div class="course-content"><small>${c.en}</small><h3>${c.title}</h3><p>${c.desc}</p>${full?`<div class="course-rows">${c.rows.map(r=>`<button class="course-row" data-open="${r[2]}"${r[2].startsWith('page:')?'':` data-edit-id="${r[2]}" data-edit-label="${esc(c.code+' · '+r[1])}"`}><span class="row-icon" aria-hidden="true">${icon(r[0])}</span>${r[1]}<span class="row-arrow" aria-hidden="true">${icon('external')}</span></button>`).join('')}</div>`:`<a href="#portfolio" data-course="${c.id}" class="card-bottom">Terokai kursus <span class="arrow" aria-hidden="true">${icon('external')}</span></a>`}</div></article>`}
 
 // Give each portfolio illustration its own animation state.
 const portfolioMotion = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
@@ -40,9 +48,10 @@ function observePortfolioScenes() {
  }
 }
 
-function filterCourses(id){$('#portfolio-courses').innerHTML=courses.filter(c=>id==='all'||c.id===id).map(c=>courseCard(c,true)).join('');document.querySelectorAll('[data-filter]').forEach(b=>{const yes=b.dataset.filter===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});observePortfolioScenes()}
+let courseFilter='all';
+function filterCourses(id){courseFilter=id;$('#portfolio-courses').innerHTML=courses.filter(c=>id==='all'||c.id===id).map(c=>courseCard(c,true)).join('');document.querySelectorAll('[data-filter]').forEach(b=>{const yes=b.dataset.filter===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});observePortfolioScenes()}
 filterCourses('all');
-function resourceCard(r){return `<article class="resource-card ${r.qr?'has-resource-qr':''}"><span class="resource-icon" aria-hidden="true">${icon(r.icon)}</span><small>${r.tag}</small><h3>${r.title}</h3><p>${r.desc}</p>${r.qr?`<figure class="resource-qr"><img src="${r.qr}" width="190" height="190" alt="Kod QR untuk ${r.title}"><figcaption>Imbas untuk membuka bahan</figcaption></figure>`:''}${r.url?`<a href="${r.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${r.title}">${r.qr?'Buka bahan':r.id==='learning'?'Buka ruang pembelajaran':r.id==='interview'?'Buka audio temu bual':r.id==='movie'?'Buka movie review':r.id==='podcast'?'Buka podcast':'Buka bahan'} ${icon('external')}<span class="sr-only"> (tab baharu)</span></a>`:'<span class="unavailable">Pautan belum disertakan</span>'}</article>`}
+function resourceCard(r){const url=linkFor(r.id,r.url),custom=Boolean(linkOverrides[r.id]),qr=r.qr&&!custom?r.qr:'';return `<article class="resource-card ${qr?'has-resource-qr':''}" data-edit-id="${r.id}" data-edit-label="${esc(r.title)}"><button type="button" class="edit-handle${custom?' is-custom':''}" data-edit-id="${r.id}" data-edit-label="${esc(r.title)}" aria-label="Edit pautan ${esc(r.title)}" title="Edit pautan">${icon('edit')}</button><span class="resource-icon" aria-hidden="true">${icon(r.icon)}</span><small>${r.tag}</small><h3>${r.title}</h3><p>${r.desc}</p>${qr?`<figure class="resource-qr"><img src="${qr}" width="190" height="190" alt="Kod QR untuk ${r.title}"><figcaption>Imbas untuk membuka bahan</figcaption></figure>`:''}${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${r.title}">${r.qr?'Buka bahan':r.id==='learning'?'Buka ruang pembelajaran':r.id==='interview'?'Buka audio temu bual':r.id==='movie'?'Buka movie review':r.id==='podcast'?'Buka podcast':'Buka bahan'} ${icon('external')}<span class="sr-only"> (tab baharu)</span></a>`:'<span class="unavailable">Pautan belum disertakan</span>'}</article>`}
 
 $('#project-list').innerHTML=projects.map(resourceCard).join('');
 let resourceGroup='all';
@@ -123,7 +132,7 @@ const collections={
  'kppb-sejarah':{title:'Tugasan KPPB Sejarah',label:'EDUP6013 · KPPB',icon:'mic',text:'Dokumentasi hasil kerja kursus Sejarah Pendidikan di Malaysia.',items:['interview']},
  'kppb-english':{title:'KPPB Assignments',label:'MPU6122 · KPPB',icon:'film',text:'A collection of work for English Language Proficiency.',items:['movie']}
 };
-function openResource(id){if(id.startsWith('page:')){location.hash=id.slice(5);return}let info=collections[id];if(!info){const r=resources.find(r=>r.id===id);if(r)info={title:r.title,label:r.tag,icon:r.icon,text:r.desc,items:r.url?[r.id]:[],missing:r.url?'':'Pautan bahan belum disertakan.'}}if(!info)return;$('#dialog-icon').innerHTML=icon(info.icon);$('#dialog-label').textContent=info.label;$('#dialog-title').textContent=info.title;$('#dialog-body').innerHTML=`<p>${info.text}</p>${info.missing?`<div class="empty-state">${icon('leaf')} ${info.missing}</div>`:''}`;$('#dialog-actions').innerHTML=(info.items||[]).map(id=>resources.find(r=>r.id===id)).filter(Boolean).map(r=>`<a class="button primary" href="${r.url}" target="_blank" rel="noopener noreferrer">${icon(r.icon)} ${r.title} <span>${icon('external')}</span></a>`).join('');dialog.showModal()}
+function openResource(id){if(id.startsWith('page:')){location.hash=id.slice(5);return}if(collections[id]&&linkOverrides[id]){window.open(linkOverrides[id],'_blank','noopener,noreferrer');return}let info=collections[id];if(!info){const r=resources.find(r=>r.id===id);if(r)info={title:r.title,label:r.tag,icon:r.icon,text:r.desc,items:linkFor(r.id,r.url)?[r.id]:[],missing:linkFor(r.id,r.url)?'':'Pautan bahan belum disertakan.'}}if(!info)return;$('#dialog-icon').innerHTML=icon(info.icon);$('#dialog-label').textContent=info.label;$('#dialog-title').textContent=info.title;$('#dialog-body').innerHTML=`<p>${info.text}</p>${info.missing?`<div class="empty-state">${icon('leaf')} ${info.missing}</div>`:''}`;$('#dialog-actions').innerHTML=(info.items||[]).map(id=>resources.find(r=>r.id===id)).filter(r=>r&&linkFor(r.id,r.url)).map(r=>`<a class="button primary" href="${esc(linkFor(r.id,r.url))}" target="_blank" rel="noopener noreferrer">${icon(r.icon)} ${r.title} <span>${icon('external')}</span></a>`).join('');dialog.showModal()}
 $('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});
 
 /* Keep decorative motion in step with system and page visibility. */
@@ -134,3 +143,15 @@ $('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventL
  document.addEventListener('visibilitychange',update);
  update();
 })();
+
+/* API untuk hub-links.js: terima pautan terkini (Firebase) dan lukis semula bahagian berkaitan. */
+function applyStaticLinks(){document.querySelectorAll('a[data-static-link]').forEach(a=>{if(!a.dataset.defaultHref)a.dataset.defaultHref=a.getAttribute('href');a.href=linkOverrides[a.dataset.editId]||a.dataset.defaultHref})}
+applyStaticLinks();
+window.hubSetLinks=raw=>{
+ linkOverrides=sanitizeLinks(raw);
+ try{localStorage.setItem(LINK_CACHE,JSON.stringify(linkOverrides))}catch{}
+ $('#project-list').innerHTML=projects.map(resourceCard).join('');
+ renderResources();filterCourses(courseFilter);applyStaticLinks();
+ requestAnimationFrame(fitPageControls);
+};
+window.hubLinkInfo=id=>{const r=resources.find(x=>x.id===id)||projects.find(x=>x.id===id);const fixed={kuiz:document.querySelector('a[data-edit-id="kuiz"]'),legendara:document.querySelector('a[data-edit-id="legendara"]')}[id];return{custom:linkOverrides[id]||'',fallback:r?(r.url||''):fixed?(fixed.dataset.defaultHref||''):''}};

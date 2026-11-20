@@ -36,3 +36,10 @@ Pastikan `databaseURL` menggunakan alamat sebenar yang dipaparkan dalam Firebase
 **Penting:** Jangan letakkan service account key atau Firebase Admin SDK credentials dalam fail frontend. Konfigurasi Web Firebase bukan rahsia, tetapi keselamatan penulisan data bergantung pada Authentication dan Database Rules.
 
 Tanpa konfigurasi projek Firebase, halaman Tetapan masih boleh digunakan untuk ujian pada peranti yang sama melalui localStorage; perubahan tersebut tidak disegerakkan antara peranti.
+
+## Mod edit pautan (butang Tetapan)
+
+- Butang Tetapan (ikon gear) di header membuka popup kelantangan dan butang pensel (mod edit).
+- Pautan disimpan di `ekspresCilik/links/<id>` dan disegerakkan masa nyata kepada semua pelawat.
+- Log masuk pentadbir guna emel + kata laluan Firebase Authentication (tiada Cloud Function / pelan Blaze diperlukan).
+- Peraturan `.read: true` dan `.write: "auth != null"` pada `ekspresCilik` sudah mencukupi.
