@@ -19,7 +19,28 @@ const projects=[
 ];
 function courseCard(c,full=false){return `<article class="course-card ${c.id}"><${full?'div':`a href="#portfolio" data-course="${c.id}"`} class="course-art" ${full?'':`aria-label="Terokai ${c.title}"`}><span class="course-code">${c.code}</span>${icon('sparkle','art-star')}<svg class="course-scene" viewBox="0 0 320 280" aria-hidden="true"><use href="#${c.scene}"/></svg></${full?'div':'a'}><div class="course-content"><small>${c.en}</small><h3>${c.title}</h3><p>${c.desc}</p>${full?`<div class="course-rows">${c.rows.map(r=>`<button class="course-row" data-open="${r[2]}"><span class="row-icon" aria-hidden="true">${icon(r[0])}</span>${r[1]}<span class="row-arrow" aria-hidden="true">${icon('external')}</span></button>`).join('')}</div>`:`<a href="#portfolio" data-course="${c.id}" class="card-bottom">Terokai kursus <span class="arrow" aria-hidden="true">${icon('external')}</span></a>`}</div></article>`}
 
-function filterCourses(id){$('#portfolio-courses').innerHTML=courses.filter(c=>id==='all'||c.id===id).map(c=>courseCard(c,true)).join('');document.querySelectorAll('[data-filter]').forEach(b=>{const yes=b.dataset.filter===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)})}
+// Give each portfolio illustration its own animation state.
+const portfolioMotion = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+ for (const entry of entries) {
+  entry.target.classList.toggle('scene-visible', entry.isIntersecting);
+ }
+}) : null;
+
+function observePortfolioScenes() {
+ if (!portfolioMotion) return;
+ portfolioMotion.disconnect();
+ for (const scene of document.querySelectorAll('#portfolio .section-art svg, #portfolio .course-scene')) {
+  if (!scene.classList.contains('observed-scene')) {
+   const reference = scene.firstElementChild.getAttribute('href');
+   const template = document.getElementById(reference.slice(1));
+   scene.replaceChildren(...Array.from(template.children, child => child.cloneNode(true)));
+   scene.classList.add('observed-scene');
+  }
+  portfolioMotion.observe(scene);
+ }
+}
+
+function filterCourses(id){$('#portfolio-courses').innerHTML=courses.filter(c=>id==='all'||c.id===id).map(c=>courseCard(c,true)).join('');document.querySelectorAll('[data-filter]').forEach(b=>{const yes=b.dataset.filter===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});observePortfolioScenes()}
 filterCourses('all');
 function resourceCard(r){return `<article class="resource-card ${r.qr?'has-resource-qr':''}"><span class="resource-icon" aria-hidden="true">${icon(r.icon)}</span><small>${r.tag}</small><h3>${r.title}</h3><p>${r.desc}</p>${r.qr?`<figure class="resource-qr"><img src="${r.qr}" width="190" height="190" alt="Kod QR untuk ${r.title}"><figcaption>Imbas untuk membuka bahan</figcaption></figure>`:''}${r.url?`<a href="${r.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${r.title}">${r.qr?'Buka bahan':r.id==='learning'?'Buka ruang pembelajaran':r.id==='interview'?'Buka audio temu bual':r.id==='movie'?'Buka movie review':r.id==='podcast'?'Buka podcast':'Buka bahan'} ${icon('external')}<span class="sr-only"> (tab baharu)</span></a>`:'<span class="unavailable">Pautan belum disertakan</span>'}</article>`}
 
@@ -76,7 +97,16 @@ function showPage(){
  if(location.hash){window.scrollTo({top:0,behavior:'instant'});$('#kandungan').focus({preventScroll:true})}
 }
 window.addEventListener('hashchange',showPage);showPage();
-window.addEventListener('resize',fitPageControls);
+// Mobile browser bars can resize the viewport height throughout a scroll.
+let lastLayoutWidth = document.documentElement.clientWidth;
+let pendingLayout = 0;
+window.addEventListener('resize', () => {
+ const width = document.documentElement.clientWidth;
+ if (width === lastLayoutWidth) return;
+ lastLayoutWidth = width;
+ cancelAnimationFrame(pendingLayout);
+ pendingLayout = requestAnimationFrame(fitPageControls);
+});
 if(document.fonts)document.fonts.ready.then(fitPageControls);
 document.addEventListener('click',event=>{if(event.target.closest('[data-filter],[data-resource]'))requestAnimationFrame(fitFilterLabels)});
 $('.menu-toggle').addEventListener('click',()=>{const expanded=$('.nav-inner').classList.toggle('expanded');$('.menu-toggle').setAttribute('aria-expanded',expanded)});

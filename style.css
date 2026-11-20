@@ -125,3 +125,14 @@ footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing
 .contributor-list .contributor-avatar{position:relative}
 .contributor-list .contributor-avatar img{position:absolute;top:0;left:-35.3846%;width:341.15385%;max-width:none;height:auto;object-fit:initial}
 .contributor-list>.contributor:nth-child(2) .contributor-avatar img{left:-205.96154%}
+
+#portfolio .observed-scene:not(.scene-visible) .character-motion {
+ animation-play-state: paused;
+}
+@media (max-width: 760px) {
+ body:has(#portfolio.active) #main-nav {
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+ }
+}
