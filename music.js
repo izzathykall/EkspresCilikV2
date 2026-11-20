@@ -25,7 +25,7 @@
  const status=player.querySelector('#hub-music-status'),startButton=player.querySelector('.hub-music-start'),muteButton=player.querySelector('.hub-music-mute'),slider=player.querySelector('input'),output=player.querySelector('output'),toggleButton=player.querySelector('.hub-music-toggle'),panel=player.querySelector('#hub-music-panel');
  function setOpen(open,returnFocus=false){panel.hidden=!open;toggleButton.setAttribute('aria-expanded',String(open));if(open)slider.focus({preventScroll:true});else if(returnFocus)toggleButton.focus({preventScroll:true})}
  toggleButton.addEventListener('click',()=>{unlockAudio();setOpen(panel.hidden);if(!muted&&volume>0)attempt()});
- document.addEventListener('click',event=>{if(!player.contains(event.target))setOpen(false)});
+ document.addEventListener('click',event=>{if(!event.composedPath().includes(player))setOpen(false)});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();setOpen(false,true)}});
  player.addEventListener('focusout',event=>{if(event.relatedTarget&&!player.contains(event.relatedTarget))setOpen(false)});
  slider.addEventListener('keydown',event=>{let next;if(event.key==='ArrowUp')next=volume+.05;else if(event.key==='ArrowDown')next=volume-.05;else if(event.key==='Home')next=0;else if(event.key==='End')next=1;else return;event.preventDefault();changeVolume(next)});
@@ -67,9 +67,10 @@
  }
  function remember(){try{write(window.localStorage,PREF,{volume,muted})}catch{}}
  function savePosition(){if(Number.isFinite(audio.currentTime)){try{write(window.sessionStorage,POSITION,{time:audio.currentTime})}catch{}}}
+ let iconState=null; // only swap the SVG when it really changes, otherwise a click target gets detached mid-click
  function update(){
   const silent=muted||volume===0;
-  muteButton.innerHTML=graphic(silent?'mute':'speaker');toggleButton.innerHTML=graphic(silent?'mute':'speaker');muteButton.setAttribute('aria-pressed',String(silent));muteButton.setAttribute('aria-label',silent?'Hidupkan bunyi muzik':'Senyapkan muzik');muteButton.title=silent?'Hidupkan bunyi':'Senyapkan muzik';toggleButton.title=silent?'Tetapan bunyi · Mute':'Tetapan bunyi';
+  if(iconState!==silent){iconState=silent;muteButton.innerHTML=graphic(silent?'mute':'speaker');toggleButton.innerHTML=graphic(silent?'mute':'speaker')}muteButton.setAttribute('aria-pressed',String(silent));muteButton.setAttribute('aria-label',silent?'Hidupkan bunyi muzik':'Senyapkan muzik');muteButton.title=silent?'Hidupkan bunyi':'Senyapkan muzik';toggleButton.title=silent?'Tetapan bunyi · Mute':'Tetapan bunyi';
   slider.value=String(Math.round(volume*100));slider.setAttribute('aria-valuetext',`${Math.round(volume*100)} peratus`);output.value=`${Math.round(volume*100)}%`;output.textContent=output.value;
   status.textContent=error?'Fail muzik tidak dapat dimainkan':silent?'Muzik disenyapkan':started&&!audio.paused&&graphReady()?'Sedang dimainkan · Berulang':'Klik untuk memainkan muzik';
   startButton.hidden=started&&!audio.paused&&graphReady()||error||silent;muteButton.hidden=!startButton.hidden;
