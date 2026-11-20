@@ -18,17 +18,12 @@
   const paths={music:'<path d="M9 18V5l12-3v13M9 9l12-3"/><ellipse cx="5" cy="19" rx="4" ry="3"/><ellipse cx="17" cy="16" rx="4" ry="3"/>',speaker:'<path d="M3 9h4l5-5v16l-5-5H3zm13-2q6 5 0 10m3-13q9 8 0 16"/>',mute:'<path d="M3 9h4l5-5v16l-5-5H3zm13 0 6 6m0-6-6 6"/>',play:'<path d="m7 4 13 8-13 8z"/>'};
   return `<svg viewBox="0 0 24 24" class="hub-music-icon" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</svg>`;
  };
- const player=document.createElement('section');player.id='hub-music-player';player.className='hub-music';player.setAttribute('aria-label','Pemain muzik latar');
- player.innerHTML=`<button class="hub-music-toggle" type="button" aria-label="Tetapan bunyi" aria-expanded="false" aria-controls="hub-music-panel" title="Tetapan bunyi">${graphic('speaker')}</button><div id="hub-music-panel" class="hub-music-panel" role="dialog" aria-label="Tetapan muzik" hidden><span id="hub-music-status" class="hub-visually-hidden" role="status">Menyediakan muzik…</span><label class="hub-music-volume"><span class="hub-visually-hidden">Kelantangan muzik latar</span><input id="hub-music-volume" type="range" min="0" max="100" step="1" orient="vertical" aria-orientation="vertical" value="${Math.round(volume*100)}" aria-label="Kelantangan muzik latar"><output class="hub-visually-hidden" for="hub-music-volume">${Math.round(volume*100)}%</output></label><button class="hub-music-start" type="button" data-music-start aria-label="Mainkan muzik" title="Mainkan muzik">${graphic('play')}</button><button class="hub-music-mute" type="button" data-music-mute aria-pressed="false" aria-label="Senyapkan muzik">${graphic('speaker')}</button></div>`;
- const host=document.querySelector('.site-header')||document.querySelector('header .top')||document.querySelector('header');
- if(host){const menu=host.querySelector('.settings-toggle')||host.querySelector('.menu-toggle');if(menu)host.insertBefore(player,menu);else host.append(player);host.classList.add('has-music-controls')}else{document.body.prepend(player);player.classList.add('hub-music-standalone')}
- const status=player.querySelector('#hub-music-status'),startButton=player.querySelector('.hub-music-start'),muteButton=player.querySelector('.hub-music-mute'),slider=player.querySelector('input'),output=player.querySelector('output'),toggleButton=player.querySelector('.hub-music-toggle'),panel=player.querySelector('#hub-music-panel');
- function setOpen(open,returnFocus=false){panel.hidden=!open;toggleButton.setAttribute('aria-expanded',String(open));if(open)slider.focus({preventScroll:true});else if(returnFocus)toggleButton.focus({preventScroll:true})}
- toggleButton.addEventListener('click',()=>{unlockAudio();setOpen(panel.hidden);if(!muted&&volume>0)attempt()});
- document.addEventListener('click',event=>{if(!player.contains(event.target))setOpen(false)});
- document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.preventDefault();setOpen(false,true)}});
- player.addEventListener('focusout',event=>{if(event.relatedTarget&&!player.contains(event.relatedTarget))setOpen(false)});
- slider.addEventListener('keydown',event=>{let next;if(event.key==='ArrowUp')next=volume+.05;else if(event.key==='ArrowDown')next=volume-.05;else if(event.key==='Home')next=0;else if(event.key==='End')next=1;else return;event.preventDefault();changeVolume(next)});
+ const player=document.createElement('section');player.id='hub-music-player';player.className='hub-music';player.setAttribute('aria-label','Kawalan muzik latar');
+ player.innerHTML=`<div class="hub-music-volume-wrap"><label class="hub-music-volume"><span>Kelantangan muzik latar</span><input id="hub-music-volume" type="range" min="0" max="100" step="1" value="${Math.round(volume*100)}" aria-label="Kelantangan muzik latar"></label><output class="hub-music-output" for="hub-music-volume">${Math.round(volume*100)}%</output></div><div class="hub-music-actions"><button class="hub-music-start" type="button" data-music-start aria-label="Mainkan muzik" title="Mainkan muzik">${graphic('play')}<span>Mainkan muzik</span></button><button class="hub-music-mute" type="button" data-music-mute aria-pressed="false" aria-label="Senyapkan muzik" title="Senyapkan muzik">${graphic('speaker')}<span>Senyapkan</span></button></div><span id="hub-music-status" class="hub-music-status" role="status">Menyediakan muzik…</span>`;
+ const host=document.querySelector('#sound-controls');
+ if(host)host.append(player);else player.hidden=true;
+ const status=player.querySelector('#hub-music-status'),startButton=player.querySelector('.hub-music-start'),muteButton=player.querySelector('.hub-music-mute'),slider=player.querySelector('input'),output=player.querySelector('output');
+ slider.addEventListener('keydown',event=>{let next;if(event.key==='ArrowRight'||event.key==='ArrowUp')next=volume+.05;else if(event.key==='ArrowLeft'||event.key==='ArrowDown')next=volume-.05;else if(event.key==='Home')next=0;else if(event.key==='End')next=1;else return;event.preventDefault();changeVolume(next)});
 
  const audio=document.createElement('audio');audio.id='hub-background-music';audio.loop=true;audio.autoplay=true;audio.preload='auto';try{audio.volume=0}catch{}audio.muted=muted;audio.setAttribute('aria-hidden','true');
  // Safari on iPhone ignores HTMLMediaElement.volume. Route the track through
@@ -69,9 +64,9 @@
  function savePosition(){if(Number.isFinite(audio.currentTime)){try{write(window.sessionStorage,POSITION,{time:audio.currentTime})}catch{}}}
  function update(){
   const silent=muted||volume===0;
-  muteButton.innerHTML=graphic(silent?'mute':'speaker');toggleButton.innerHTML=graphic(silent?'mute':'speaker');muteButton.setAttribute('aria-pressed',String(silent));muteButton.setAttribute('aria-label',silent?'Hidupkan bunyi muzik':'Senyapkan muzik');muteButton.title=silent?'Hidupkan bunyi':'Senyapkan muzik';toggleButton.title=silent?'Tetapan bunyi · Mute':'Tetapan bunyi';
+  muteButton.innerHTML=`${graphic(silent?'speaker':'mute')}<span>${silent?'Hidupkan bunyi':'Senyapkan'}</span>`;muteButton.setAttribute('aria-pressed',String(silent));muteButton.setAttribute('aria-label',silent?'Hidupkan bunyi muzik':'Senyapkan muzik');muteButton.title=silent?'Hidupkan bunyi':'Senyapkan muzik';
   slider.value=String(Math.round(volume*100));slider.setAttribute('aria-valuetext',`${Math.round(volume*100)} peratus`);output.value=`${Math.round(volume*100)}%`;output.textContent=output.value;
-  status.textContent=error?'Fail muzik tidak dapat dimainkan':silent?'Muzik disenyapkan':started&&!audio.paused&&graphReady()?'Sedang dimainkan · Berulang':'Klik untuk memainkan muzik';
+  status.textContent=error?'Fail muzik tidak dapat dimainkan':silent?'Muzik disenyapkan':started&&!audio.paused&&graphReady()?'Sedang dimainkan · Berulang':'Tekan Mainkan muzik jika audio belum bermula';
   startButton.hidden=started&&!audio.paused&&graphReady()||error||silent;muteButton.hidden=!startButton.hidden;
   if(startButton.hidden&&document.activeElement===startButton)muteButton.focus({preventScroll:true});
   player.classList.toggle('hub-music-silent',silent);
@@ -122,7 +117,7 @@
  slider.addEventListener('input',()=>changeVolume(Number(slider.value)/100));
  slider.addEventListener('change',()=>changeVolume(Number(slider.value)/100));
  muteButton.addEventListener('click',toggleMute);
- document.addEventListener('click',event=>{const button=event.target.closest('[data-music-start]');if(button){activate();if(!player.contains(button))slider.focus({preventScroll:true})}});
+ document.addEventListener('click',event=>{const button=event.target.closest('[data-music-start]');if(button)activate()});
  const gesture=event=>{if(!muted&&volume>0&&!event.target.closest('[data-music-mute], .hub-music-volume')){unlockAudio();if(!started||!graphReady())attempt()}};
  document.addEventListener('pointerdown',gesture,{passive:true});
  document.addEventListener('touchend',gesture,{passive:true});
@@ -145,7 +140,7 @@
   const finishNavigation=leaving&&transition?transition.done:null;
   if(frame)cancelAnimationFrame(frame);
   frame=0;transition=null;gain=0;setOutputGain(0);audio.muted=muted;
-  savePosition();audio.pause();setOpen(false);update();
+  savePosition();audio.pause();update();
   if(finishNavigation)finishNavigation();
  }
  function resumeWhenHere(){

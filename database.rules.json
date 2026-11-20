@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "ekspresCilik": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'ekspres-admin' && auth.token.admin === true"
+    }
+  }
+}

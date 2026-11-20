@@ -138,10 +138,57 @@ footer.site-footer .footer-courses{font-size:10px;line-height:1.6;letter-spacing
 }
 
 /* Settings and editable learning resources */
-.settings-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;border:1px solid #dce8ef;border-radius:10px;background:#fffdf8;color:#7c9fb8;padding:8px;transition:background .18s,border-color .18s}
+.settings-toggle{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;border:1px solid #dce8ef;border-radius:10px;background:#fffdf8;color:#7c9fb8;padding:8px;transition:background .18s,border-color .18s}
 .settings-toggle>.ui-icon{width:19px;height:19px}.settings-toggle:hover{background:#e8f4fc;border-color:#c4deed}
 .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:12px 0 22px}
 .settings-card{background:#fffdf9;border:1px solid #e1e9ed;border-radius:18px;padding:24px;min-width:0}
 .settings-card h2{font-size:21px;color:#40596c;margin:12px 0 8px}.settings-card>p{font-size:13px;line-height:1.75}.settings-icon{width:45px;height:45px;display:grid;place-items:center;border-radius:13px;background:#e8f4fc;color:#75a4c0}.settings-icon .ui-icon{width:23px;height:23px}.settings-wide{grid-column:1/-1}
 .admin-link-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.admin-link-field,.admin-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#647f92;min-width:0}.admin-link-field input,.admin-form input,.admin-form textarea{width:100%;border:1px solid #dce8ef;border-radius:9px;padding:11px 12px;background:#fff;color:#435b6d;font:inherit;font-weight:400;min-width:0}.admin-form{display:grid;gap:14px;margin-top:18px}.admin-form textarea{resize:vertical}.admin-field-label{display:block;font-size:12px;font-weight:700;color:#647f92;margin-bottom:8px}.icon-picker{display:flex;flex-wrap:wrap;gap:8px}.icon-choice{width:42px;height:42px;border:1px solid #dce8ef;border-radius:10px;background:#fff;color:#7da7c1;display:grid;place-items:center}.icon-choice .ui-icon{width:20px;height:20px}.icon-choice.selected{background:#e5f3fc;border-color:#80b8d4;color:#328fbb;box-shadow:inset 0 0 0 1px #80b8d4}.custom-material-list{margin-top:20px}.custom-material-list h3{font-size:16px;color:#55788f}.custom-material-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #e9eff2}.custom-material-row>span{color:#7da7c1}.custom-material-row>span .ui-icon{width:22px;height:22px}.custom-material-row>div{display:grid;gap:3px;flex:1;min-width:0}.custom-material-row strong{font-size:13px;color:#526e81}.custom-material-row small{font-size:11px;color:#8a9ba6;overflow-wrap:anywhere}.custom-material-row button{border:0;background:#fff0f0;color:#bd7777;border-radius:8px;width:36px;height:36px}.custom-material-row button .ui-icon{width:17px;height:17px}.admin-empty,.firebase-status{font-size:12px;color:#8499a8}.firebase-status{padding:12px 15px;border-radius:10px;background:#f1f7fa}.firebase-status[data-state="success"]{background:#eaf6ef;color:#4b8964}.firebase-status[data-state="error"]{background:#fff0ef;color:#b56d68}.firebase-login{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin:12px 0}.firebase-login label{display:grid;gap:5px;font-size:11px;color:#668196}.firebase-login input{border:1px solid #dce8ef;border-radius:8px;padding:10px;min-width:0}
 @media(max-width:760px){.settings-toggle{display:flex}.site-header{gap:8px}.site-header.has-music-controls{gap:7px}.site-header .brand{margin-right:auto}.settings-grid{grid-template-columns:1fr}.settings-wide{grid-column:auto}.admin-link-list{grid-template-columns:1fr}.settings-card{padding:20px}.firebase-login{grid-template-columns:1fr}.firebase-login .button{width:100%}}
+
+/* Firebase-backed settings refinements and editable custom material tabs. */
+.settings-toggle{border:1px solid #dce8ef;border-radius:10px;background:#fffdf8;color:#7c9fb8;min-width:44px;min-height:44px}
+.settings-toggle:hover,.settings-toggle:focus-visible{background:#e8f4fc;border-color:#c4deed}
+.resource-tabs>.chip[data-custom-tab]{display:flex;align-items:center;justify-content:center;gap:6px}
+.resource-tabs>.chip[data-custom-tab]>.ui-icon{width:15px;height:15px;flex:0 0 15px}
+.custom-material-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.custom-material-row .custom-material-actions button{display:grid;place-items:center;width:36px;height:36px;border:1px solid #dce8ef;border-radius:9px;background:#f5f9fb;color:#6f9ab5}
+.custom-material-row .custom-material-actions button .ui-icon{width:16px;height:16px}
+.custom-material-row .custom-material-actions .admin-delete-material{background:#fff3f1;border-color:#f0dcd8;color:#b87973}
+.custom-material-row .custom-material-actions button:hover{filter:brightness(.97)}
+.admin-material-url{overflow-wrap:anywhere}
+.admin-form-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.admin-cancel{background:#f1f5f7;border:1px solid #dce8ef;color:#647f92;box-shadow:none}
+.admin-cancel:hover{background:#e7f0f4}
+.custom-material-empty{padding:14px 16px;border:1px dashed #dce8ef;border-radius:12px;background:#fbfdfe;color:#8197a6;font-size:12px}
+@media(max-width:760px){
+ .site-header.has-music-controls>.settings-toggle{display:flex;order:2;flex:0 0 44px;margin:0}
+ .site-header.has-music-controls>.menu-toggle{order:3;flex-shrink:0}
+}
+
+
+/* PIN-only Firebase administrator access */
+.firebase-login{grid-template-columns:minmax(0,1fr) auto;max-width:560px;align-items:end}
+.firebase-login label{font-size:12px;font-weight:700;color:#668196}
+.firebase-login input{width:100%;font:inherit;font-size:15px;letter-spacing:.18em}
+.firebase-login button:disabled{opacity:.65;cursor:wait}
+@media(max-width:760px){.firebase-login{grid-template-columns:1fr;max-width:none}.firebase-login .button{width:100%}}
+.custom-material-row>.custom-material-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+
+/* Tablet header: keep Settings visible beside the Menu on iPad-sized screens. */
+@media (min-width:761px) and (max-width:1024px){.site-header{gap:10px;padding:18px 24px}.site-header>.brand{margin-right:auto;min-width:0}.site-header>.header-note{display:none}.site-header>.menu-toggle{display:flex;align-items:center;gap:6px;border:1px solid #dce8ef;border-radius:10px;padding:8px 12px;background:#fffdf8;color:#7c9fb8;min-height:44px;font-size:18px}.site-header>.menu-toggle span{font-size:12px}.site-header>.settings-toggle{display:flex;order:2}.site-header>.menu-toggle{order:3;flex-shrink:0}nav{position:relative}.nav-inner{display:none;justify-content:flex-start;flex-wrap:wrap;padding:12px 17px;gap:3px}.nav-inner.expanded{display:flex}.nav-inner.expanded a{width:calc(33.333% - 3px);padding:12px;border-radius:8px}}
+
+
+/* iPad and touch-tablet layout: keep Settings and Menu visible in portrait and landscape. */
+@media (pointer:coarse) and (min-width:761px){
+ .site-header{gap:10px;padding:18px 24px}
+ .site-header>.brand{margin-right:auto;min-width:0}
+ .site-header>.header-note{display:none}
+ .site-header>.settings-toggle{display:flex!important;visibility:visible!important;opacity:1!important;order:2;flex:0 0 44px;position:relative;z-index:20}
+ .site-header>.menu-toggle{display:flex;align-items:center;justify-content:center;gap:6px;order:3;flex-shrink:0;border:1px solid #dce8ef;border-radius:10px;padding:8px 12px;background:#fffdf8;color:#7c9fb8;min-height:44px;font-size:18px}
+ .site-header>.menu-toggle span{font-size:12px}
+ nav{position:relative}
+ .nav-inner{display:none;justify-content:flex-start;flex-wrap:wrap;padding:12px 17px;gap:3px}
+ .nav-inner.expanded{display:flex}
+ .nav-inner.expanded a{width:calc(33.333% - 3px);padding:12px;border-radius:8px}
+}

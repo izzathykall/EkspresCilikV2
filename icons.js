@@ -28,7 +28,9 @@ star:'<path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1z"/>',
 settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a8 8 0 0 0 0-6l1.4-1.1-1.4-2.4-1.7.6a8 8 0 0 0-1.5-.9L16 3h-8l-.3 2.2a8 8 0 0 0-1.5.9l-1.7-.6-1.4 2.4L4.5 9a8 8 0 0 0 0 6l-1.4 1.1 1.4 2.4 1.7-.6a8 8 0 0 0 1.5.9L8 21h8l.3-2.2a8 8 0 0 0 1.5-.9l1.7.6 1.4-2.4z"/>',
 'volume-2':'<path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/>',
 link:'<path d="M10 13a5 5 0 0 0 7.1 0l3-3A5 5 0 0 0 13 2.9l-1.7 1.7m2.7 6.4a5 5 0 0 0-7.1 0l-3 3A5 5 0 0 0 11 21.1l1.7-1.7"/>',
-'folder-plus':'<path d="M3 9V5a2 2 0 0 1 2-2h5l3 3h6a2 2 0 0 1 2 2v2M2 10h20l-3 11H5zM12 12v6m-3-3h6"/>'
+'folder-plus':'<path d="M3 9V5a2 2 0 0 1 2-2h5l3 3h6a2 2 0 0 1 2 2v2M2 10h20l-3 11H5zM12 12v6m-3-3h6"/>',
+edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
+trash:'<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/>'
 };
 document.body.insertAdjacentHTML('afterbegin',`<svg xmlns="http://www.w3.org/2000/svg" class="svg-defs" aria-hidden="true"><defs>${Object.entries(paths).map(([name,path])=>`<symbol id="i-${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${path}</symbol>`).join('')}</defs></svg>`);
 window.hubIcon=(name,extra='')=>`<svg class="ui-icon ${extra}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
