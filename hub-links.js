@@ -67,7 +67,7 @@
  function buildUi() {
   if (ui) return ui;
   const bar = el(`<div class="hub-edit-ui hub-edit-bar" role="region" aria-label="Mod edit pautan" hidden>
-   <span class="hub-edit-bar-text"><strong>Mod edit pautan</strong><small>Tekan mana-mana kotak untuk ubah pautan. Selesai = log keluar automatik.</small></span>
+   <span class="hub-edit-bar-text"><strong>Mod edit pautan</strong><small>Tekan mana-mana kotak untuk ubah pautan.</small></span>
    <button type="button" class="hub-edit-done">Selesai</button></div>`);
   const toast = el(`<div class="hub-edit-ui hub-edit-toast" role="status" aria-live="polite" hidden></div>`);
   const editor = el(`<dialog class="hub-edit-ui hub-edit-dialog" aria-labelledby="hub-edit-title"><form method="dialog" class="hub-edit-form" novalidate>
@@ -157,7 +157,7 @@
  async function finish() {
   stop();
   try { if (auth) await auth.signOut(); } catch {}
-  admin = false; say('Selesai. Anda telah log keluar.');
+  admin = false; say('Selesai');
  }
  function stop() {
   editing = false; document.body.classList.remove('hub-editing');
