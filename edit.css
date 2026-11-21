@@ -7,7 +7,8 @@ body.hub-editing .edit-handle{display:grid;min-height:0;place-items:center;posit
 body.hub-editing .edit-handle .ui-icon{width:18px;height:18px}
 body.hub-editing .edit-handle.is-custom{background:#fff6e0;border-color:#e8c97a;color:#a77a1f}
 body.hub-editing .edit-handle:focus-visible{outline:3px solid #b19cc6;outline-offset:3px}
-body.hub-editing .course-row[data-edit-id]{position:relative}
+body.hub-editing .course-row[data-edit-id]{position:relative;width:100%;outline-offset:-3px;border-radius:10px;background:#faf6ff}
+body.hub-editing .course-rows{gap:6px}
 
 .hub-edit-ui{box-sizing:border-box;font-family:'Trebuchet MS',Arial,sans-serif}
 .hub-edit-bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:8px;width:min(560px,calc(100% - 24px));padding:10px 12px;background:#fffdf8;border:1px solid #d7c8e3;border-radius:18px;box-shadow:0 10px 30px #4a3a6a2e;color:#4f3f66}
