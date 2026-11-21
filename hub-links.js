@@ -42,6 +42,7 @@
    await loadBase();
    await loadScript(SDK + 'firebase-auth-compat.js');
    auth = firebase.auth();
+   try { await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION); } catch {}
    auth.onAuthStateChanged(user => { if (!user && admin) { admin = false; if (editing) stop(); } });
   })();
   authReady.catch(() => { authReady = null; });
@@ -66,9 +67,8 @@
  function buildUi() {
   if (ui) return ui;
   const bar = el(`<div class="hub-edit-ui hub-edit-bar" role="region" aria-label="Mod edit pautan" hidden>
-   <span class="hub-edit-bar-text"><strong>Mod edit pautan</strong><small>Tekan mana-mana kad atau butang bertanda pensel.</small></span>
-   <button type="button" class="hub-edit-done">Selesai</button>
-   <button type="button" class="hub-edit-logout">Log keluar</button></div>`);
+   <span class="hub-edit-bar-text"><strong>Mod edit pautan</strong><small>Tekan mana-mana kotak untuk ubah pautan. Selesai = log keluar automatik.</small></span>
+   <button type="button" class="hub-edit-done">Selesai</button></div>`);
   const toast = el(`<div class="hub-edit-ui hub-edit-toast" role="status" aria-live="polite" hidden></div>`);
   const editor = el(`<dialog class="hub-edit-ui hub-edit-dialog" aria-labelledby="hub-edit-title"><form method="dialog" class="hub-edit-form" novalidate>
    <h2 id="hub-edit-title">Edit pautan</h2><p class="hub-edit-name"></p>
@@ -89,11 +89,7 @@
   document.body.append(bar, toast, editor, pin);
   ui = { bar, toast, editor, pin, timer: 0 };
 
-  bar.querySelector('.hub-edit-done').addEventListener('click', stop);
-  bar.querySelector('.hub-edit-logout').addEventListener('click', async () => {
-   try { if (auth) await auth.signOut(); } catch {}
-   admin = false; stop(); say('Anda telah log keluar.');
-  });
+  bar.querySelector('.hub-edit-done').addEventListener('click', finish);
   editor.querySelector('.hub-edit-cancel').addEventListener('click', () => editor.close());
   editor.querySelector('.hub-edit-reset').addEventListener('click', () => save(''));
   editor.querySelector('form').addEventListener('submit', event => { event.preventDefault(); save(editor.querySelector('input').value); });
@@ -131,8 +127,8 @@
   const { editor } = buildUi();
   editorId = id;
   text(editor.querySelector('.hub-edit-name'), target.dataset.editLabel || id);
-  editor.querySelector('input').value = info.custom || info.fallback || '';
-  text(editor.querySelector('.hub-edit-default'), info.fallback ? 'Pautan asal: ' + info.fallback : 'Pautan asal: (belum ada)');
+  editor.querySelector('input').value = info.custom || (/^https?:/i.test(info.fallback) ? info.fallback : '');
+  text(editor.querySelector('.hub-edit-default'), info.fallback ? 'Pautan asal: ' + info.fallback : 'Pautan asal: (belum ada pautan)');
   text(editor.querySelector('.hub-edit-msg'), '');
   editor.querySelector('.hub-edit-reset').hidden = !info.custom;
   editor.showModal();
@@ -158,6 +154,11 @@
 
  /* ---------- Hidup / mati mod edit ---------- */
  const notify = () => listeners.forEach(fn => { try { fn(editing); } catch {} });
+ async function finish() {
+  stop();
+  try { if (auth) await auth.signOut(); } catch {}
+  admin = false; say('Selesai. Anda telah log keluar.');
+ }
  function stop() {
   editing = false; document.body.classList.remove('hub-editing');
   if (ui) { ui.bar.hidden = true; if (ui.editor.open) ui.editor.close(); }
@@ -185,7 +186,7 @@
  }, true);
 
  window.HubEdit = {
-  toggle: () => (editing ? stop() : start()),
+  toggle: () => (editing ? finish() : start()),
   isOn: () => editing,
   onChange: fn => { listeners.add(fn); fn(editing); }
  };

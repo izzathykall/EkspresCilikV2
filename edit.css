@@ -1,6 +1,7 @@
 /* Mod edit pautan */
 .edit-handle{display:none}
-body.hub-editing [data-edit-id]:not(.edit-handle){outline:2px dashed #b19cc6;outline-offset:3px;cursor:pointer}
+body.hub-editing [data-edit-id]:not(.edit-handle){outline:2px dashed #b19cc6;outline-offset:-2px;cursor:pointer}
+body.hub-editing{padding-bottom:96px}
 body.hub-editing .resource-card{position:relative}
 body.hub-editing .edit-handle{display:grid;min-height:0;place-items:center;position:absolute;top:10px;right:10px;width:38px;height:38px;padding:0;border:1px solid #d7c8e3;border-radius:50%;background:#fff;color:#7860a7;cursor:pointer;z-index:2;box-shadow:0 3px 10px #4a3a6a1f}
 body.hub-editing .edit-handle .ui-icon{width:18px;height:18px}
